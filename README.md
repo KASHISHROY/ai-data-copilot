@@ -8,7 +8,7 @@ AI Data Copilot is an AI-powered platform that allows users to upload datasets o
 
 ## Current Status
 
-Day 1, Part 1 is complete: the backend API has a working health check route.
+Day 1, Part 2 is complete: the backend API has a working health check route, and the frontend can call it.
 
 ## Features
 
@@ -70,6 +70,38 @@ Without schema awareness, AI can hallucinate fake tables and columns. This proje
 
    ```text
    http://127.0.0.1:8000/health
+   ```
+
+## Local Frontend Setup
+
+1. Go into the frontend folder:
+
+   ```bash
+   cd frontend
+   ```
+
+2. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+3. Copy the example environment file to `.env` and keep the local backend URL:
+
+   ```text
+   VITE_API_BASE_URL=http://127.0.0.1:8000
+   ```
+
+4. Start the frontend:
+
+   ```bash
+   npm run dev
+   ```
+
+5. Open the frontend:
+
+   ```text
+   http://localhost:5173
    ```
 
 ## Deployment Instructions
