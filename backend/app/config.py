@@ -1,5 +1,10 @@
 import os
 
+from dotenv import load_dotenv
+
+
+load_dotenv()
+
 
 class Settings:
     """Small environment settings reader for the local MVP.
