@@ -1,0 +1,42 @@
+[
+  {
+    "customer_id": 1001,
+    "name": "Asha Mehta",
+    "signup_date": "2025-11-14",
+    "total_spend": 2450.75,
+    "is_active": true,
+    "region": "West"
+  },
+  {
+    "customer_id": 1002,
+    "name": "Rohan Singh",
+    "signup_date": "2026-01-09",
+    "total_spend": 890.1,
+    "is_active": false,
+    "region": "North"
+  },
+  {
+    "customer_id": 1003,
+    "name": "Maya Rao",
+    "signup_date": "2026-02-21",
+    "total_spend": 1340,
+    "is_active": true,
+    "region": "South"
+  },
+  {
+    "customer_id": 1004,
+    "name": "Kabir Khan",
+    "signup_date": "2026-03-05",
+    "total_spend": 510.35,
+    "is_active": true,
+    "region": "East"
+  },
+  {
+    "customer_id": 1005,
+    "name": "Neha Shah",
+    "signup_date": "2026-04-17",
+    "total_spend": 3020.2,
+    "is_active": true,
+    "region": "West"
+  }
+]

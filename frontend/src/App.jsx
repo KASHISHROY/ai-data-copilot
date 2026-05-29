@@ -33,8 +33,8 @@ function App() {
 
   return (
     <main className="min-h-screen bg-stone-50 text-slate-950">
-      <div className="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-5 py-6 sm:px-8 lg:px-10">
-        <header className="flex flex-col gap-3 border-b border-slate-200 pb-5 sm:flex-row sm:items-end sm:justify-between">
+      <div className="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-5 py-7 sm:px-8 lg:px-10">
+        <header className="flex flex-col gap-4 border-b border-slate-200 pb-6 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="text-sm font-semibold uppercase tracking-normal text-teal-700">
               AI Data Copilot
@@ -48,8 +48,8 @@ function App() {
           </div>
         </header>
 
-        <section className="grid flex-1 gap-6 py-8 lg:grid-cols-[240px_1fr]">
-          <aside className="border-b border-slate-200 pb-4 lg:border-b-0 lg:border-r lg:pb-0 lg:pr-6">
+        <section className="grid flex-1 gap-7 py-8 lg:grid-cols-[240px_1fr]">
+          <aside className="border-b border-slate-200 pb-5 lg:border-b-0 lg:border-r lg:pb-0 lg:pr-6">
             <nav className="grid gap-2 text-sm font-medium text-slate-700">
               <span className="rounded-md bg-teal-700 px-3 py-2 text-white">Upload</span>
               <span className="px-3 py-2 text-slate-500">Connection</span>
@@ -57,10 +57,10 @@ function App() {
             </nav>
           </aside>
 
-          <section className="grid content-start gap-5">
+          <section className="grid content-start gap-6">
             <DatasetUpload />
 
-            <div className="rounded-md border border-slate-200 bg-white p-5 shadow-sm">
+            <div className="rounded-md border border-slate-200 bg-white p-6 shadow-sm">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <h2 className="text-xl font-semibold tracking-normal text-slate-950">

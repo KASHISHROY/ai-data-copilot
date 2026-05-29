@@ -8,7 +8,7 @@ AI Data Copilot is an AI-powered platform that allows users to upload datasets o
 
 ## Current Status
 
-Day 1 is complete:
+Day 2 is complete:
 
 - Backend FastAPI app created
 - `/health` API route created
@@ -17,6 +17,10 @@ Day 1 is complete:
 - Frontend can call the backend health route
 - Environment variable examples added
 - Beginner setup notes added
+- `/upload` API route added
+- CSV, Excel, and JSON schema extraction added
+- Frontend dataset upload interface added
+- Sample CSV and JSON testing files added
 
 ## Project Structure
 
@@ -27,10 +31,13 @@ ai-data-copilot/
       __init__.py
       config.py
       main.py
+      schema_extraction.py
     .env.example
     requirements.txt
   frontend/
     src/
+      components/
+        DatasetUpload.jsx
       App.jsx
       api.js
       index.css
@@ -40,6 +47,9 @@ ai-data-copilot/
     package.json
     tailwind.config.js
     vite.config.js
+  sample-data/
+    customers.csv
+    customers.json
   .gitignore
   README.md
 ```
@@ -159,7 +169,62 @@ Then open:
 http://localhost:5173
 ```
 
-The page should show that the backend connection is working.
+The page should show the upload workspace and backend connection status.
+
+## Day 2 Upload And Schema Extraction
+
+The backend exposes one upload route:
+
+```text
+POST /upload
+```
+
+Supported file types:
+
+- `.csv`
+- `.xlsx`
+- `.xls`
+- `.json`
+
+The route reads the uploaded file in memory with pandas and returns:
+
+- file name
+- column names
+- detected data types
+- row count
+- column count
+- first 5 sample rows
+
+Example response shape:
+
+```json
+{
+  "filename": "customers.csv",
+  "columns": ["customer_id", "name", "signup_date"],
+  "data_types": {
+    "customer_id": "int64",
+    "name": "object",
+    "signup_date": "object"
+  },
+  "row_count": 5,
+  "column_count": 6,
+  "sample_rows": [
+    {
+      "customer_id": 1001,
+      "name": "Asha Mehta",
+      "signup_date": "2025-11-14"
+    }
+  ]
+}
+```
+
+Sample files live in:
+
+```text
+sample-data/
+```
+
+Use `sample-data/customers.csv` or `sample-data/customers.json` for quick upload checks. To test Excel, open the CSV in Excel or another spreadsheet tool and save it as `.xlsx`.
 
 ## Environment Files
 
@@ -179,22 +244,27 @@ frontend/.env.example
 
 For local development, you can create real `.env` files later. Real `.env` files are ignored by Git because they can contain private settings.
 
-## Day 1 Test Checklist
+## Day 1 And Day 2 Test Checklist
 
 1. Start the backend.
 2. Open `http://127.0.0.1:8000/health`.
 3. Confirm the backend returns `status: ok`.
 4. Start the frontend.
 5. Open `http://localhost:5173`.
-6. Confirm the frontend shows `Connected`.
-7. Run the frontend production build:
+6. Confirm the frontend shows the upload workspace.
+7. Upload `sample-data/customers.csv`.
+8. Confirm the frontend displays file name, row count, column count, columns, data types, and sample rows.
+9. Upload `sample-data/customers.json`.
+10. Save the CSV as `.xlsx` and upload it.
+11. Try an unsupported file type and confirm a friendly error appears.
+12. Run the frontend production build:
 
    ```powershell
    cd frontend
    npm.cmd run build
    ```
 
-8. Confirm the build finishes without errors.
+13. Confirm the build finishes without errors.
 
 ## Deployment Instructions
 

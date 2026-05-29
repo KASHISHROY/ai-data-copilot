@@ -2,6 +2,8 @@ import { useMemo, useState } from "react";
 
 import { uploadDataset } from "../api";
 
+const SUPPORTED_FILE_TYPES = ".csv, .xlsx, .xls, .json";
+
 function DatasetUpload() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [schema, setSchema] = useState(null);
@@ -46,15 +48,15 @@ function DatasetUpload() {
   }
 
   return (
-    <section className="grid gap-5">
-      <div className="rounded-md border border-slate-200 bg-white p-5 shadow-sm">
+    <section className="grid gap-6">
+      <div className="rounded-md border border-slate-200 bg-white p-6 shadow-sm">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h2 className="text-xl font-semibold tracking-normal text-slate-950">
               Dataset Upload
             </h2>
             <p className="mt-1 text-sm text-slate-600">
-              Upload a file to extract its schema.
+              Supported files: {SUPPORTED_FILE_TYPES}
             </p>
           </div>
           {schema ? (
@@ -66,10 +68,10 @@ function DatasetUpload() {
 
         <form className="mt-6 grid gap-4" onSubmit={handleUpload}>
           <label className="grid gap-2 text-sm font-medium text-slate-700">
-            File
+            Dataset file
             <input
               accept=".csv,.xlsx,.xls,.json"
-              className="block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 file:mr-4 file:rounded-md file:border-0 file:bg-teal-700 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-teal-800"
+              className="block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 file:mr-4 file:rounded-md file:border-0 file:bg-teal-700 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-teal-800 focus:border-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-100"
               onChange={handleFileChange}
               type="file"
             />
@@ -84,7 +86,9 @@ function DatasetUpload() {
               {isUploading ? "Uploading..." : "Upload dataset"}
             </button>
             <p className="min-h-5 text-sm text-slate-600">
-              {selectedFile ? selectedFile.name : "No file selected"}
+              {selectedFile
+                ? `${selectedFile.name} (${formatFileSize(selectedFile.size)})`
+                : "No file selected"}
             </p>
           </div>
         </form>
@@ -94,11 +98,17 @@ function DatasetUpload() {
             {error}
           </div>
         ) : null}
+
+        {schema ? (
+          <div className="mt-5 rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">
+            Extracted schema from {schema.filename}.
+          </div>
+        ) : null}
       </div>
 
       {schema ? (
-        <div className="grid gap-5">
-          <div className="rounded-md border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="grid gap-6">
+          <div className="rounded-md border border-slate-200 bg-white p-6 shadow-sm">
             <div className="grid gap-3 sm:grid-cols-3">
               <SummaryField label="File" value={schema.filename} />
               <SummaryField label="Rows" value={schema.row_count} />
@@ -106,7 +116,7 @@ function DatasetUpload() {
             </div>
           </div>
 
-          <div className="rounded-md border border-slate-200 bg-white p-5 shadow-sm">
+          <div className="rounded-md border border-slate-200 bg-white p-6 shadow-sm">
             <h3 className="text-lg font-semibold tracking-normal text-slate-950">
               Columns
             </h3>
@@ -132,7 +142,7 @@ function DatasetUpload() {
             </div>
           </div>
 
-          <div className="rounded-md border border-slate-200 bg-white p-5 shadow-sm">
+          <div className="rounded-md border border-slate-200 bg-white p-6 shadow-sm">
             <h3 className="text-lg font-semibold tracking-normal text-slate-950">
               Sample Rows
             </h3>
@@ -148,7 +158,7 @@ function DatasetUpload() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
-                  {schema.sample_rows.map((row, rowIndex) => (
+                  {schema.sample_rows.length > 0 ? schema.sample_rows.map((row, rowIndex) => (
                     <tr key={`${schema.filename}-${rowIndex}`}>
                       {sampleColumns.map((column) => (
                         <td
@@ -159,13 +169,23 @@ function DatasetUpload() {
                         </td>
                       ))}
                     </tr>
-                  ))}
+                  )) : (
+                    <tr>
+                      <td className="py-4 pr-4 text-slate-600" colSpan={sampleColumns.length}>
+                        No sample rows found in this file.
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
           </div>
         </div>
-      ) : null}
+      ) : (
+        <div className="rounded-md border border-dashed border-slate-300 bg-white p-6 text-sm text-slate-600">
+          Upload a supported dataset to preview columns, detected data types, and sample rows.
+        </div>
+      )}
     </section>
   );
 }
@@ -193,6 +213,18 @@ function formatCellValue(value) {
   }
 
   return String(value);
+}
+
+function formatFileSize(bytes) {
+  if (bytes < 1024) {
+    return `${bytes} B`;
+  }
+
+  if (bytes < 1024 * 1024) {
+    return `${(bytes / 1024).toFixed(1)} KB`;
+  }
+
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
 export default DatasetUpload;
