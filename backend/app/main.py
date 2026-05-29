@@ -1,5 +1,6 @@
 from pathlib import Path
 from typing import Any, Optional
+from zipfile import BadZipFile
 
 import pandas as pd
 from fastapi import FastAPI, File, HTTPException, UploadFile
@@ -10,18 +11,39 @@ from app.config import settings
 from app.schema_extraction import extract_schema
 
 
-def validate_csv_upload(file: Optional[UploadFile]) -> UploadFile:
+SUPPORTED_FILE_EXTENSIONS = {".csv", ".xlsx", ".xls", ".json"}
+
+
+def validate_dataset_upload(file: Optional[UploadFile]) -> UploadFile:
     if file is None or not file.filename:
-        raise HTTPException(status_code=400, detail="CSV file is required.")
+        raise HTTPException(status_code=400, detail="Dataset file is required.")
 
     file_extension = Path(file.filename).suffix.lower()
-    if file_extension != ".csv":
+    if file_extension not in SUPPORTED_FILE_EXTENSIONS:
         raise HTTPException(
             status_code=400,
-            detail="Only CSV files are supported right now.",
+            detail="Unsupported file type. Upload CSV, Excel, or JSON.",
         )
 
     return file
+
+
+def read_uploaded_dataset(uploaded_file: UploadFile) -> pd.DataFrame:
+    file_extension = Path(uploaded_file.filename or "").suffix.lower()
+
+    if file_extension == ".csv":
+        return pd.read_csv(uploaded_file.file)
+
+    if file_extension in {".xlsx", ".xls"}:
+        return pd.read_excel(uploaded_file.file)
+
+    if file_extension == ".json":
+        return pd.read_json(uploaded_file.file)
+
+    raise HTTPException(
+        status_code=400,
+        detail="Unsupported file type. Upload CSV, Excel, or JSON.",
+    )
 
 
 def create_app() -> FastAPI:
@@ -47,25 +69,30 @@ def create_app() -> FastAPI:
     async def upload_dataset(
         file: Optional[UploadFile] = File(default=None),
     ) -> dict[str, Any]:
-        uploaded_file = validate_csv_upload(file)
-        filename = uploaded_file.filename or "uploaded.csv"
+        uploaded_file = validate_dataset_upload(file)
+        filename = uploaded_file.filename or "uploaded"
 
         try:
-            dataframe = pd.read_csv(uploaded_file.file)
+            dataframe = read_uploaded_dataset(uploaded_file)
         except EmptyDataError as exc:
             raise HTTPException(
                 status_code=400,
-                detail="Uploaded CSV file is empty.",
+                detail="Uploaded file is empty.",
             ) from exc
         except ParserError as exc:
             raise HTTPException(
                 status_code=400,
-                detail="Could not parse CSV file.",
+                detail="Could not parse uploaded file.",
+            ) from exc
+        except (BadZipFile, ValueError) as exc:
+            raise HTTPException(
+                status_code=400,
+                detail="Could not read uploaded file. Please check the file format.",
             ) from exc
         except UnicodeDecodeError as exc:
             raise HTTPException(
                 status_code=400,
-                detail="Could not decode CSV file. Please upload a UTF-8 CSV.",
+                detail="Could not decode uploaded file. Please upload a UTF-8 file.",
             ) from exc
         finally:
             await uploaded_file.close()
