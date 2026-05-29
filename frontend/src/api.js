@@ -10,4 +10,21 @@ export async function getBackendHealth(signal) {
   return response.json();
 }
 
+export async function uploadDataset(file) {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const response = await fetch(`${API_BASE_URL}/upload`, {
+    method: "POST",
+    body: formData,
+  });
+  const data = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    throw new Error(data?.detail ?? "Dataset upload failed.");
+  }
+
+  return data;
+}
+
 export { API_BASE_URL };
