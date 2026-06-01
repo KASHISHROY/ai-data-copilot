@@ -4,7 +4,7 @@ A schema-aware AI data analyst that lets users query databases using plain Engli
 
 ## Full Description
 
-AI Data Copilot is an AI-powered platform that allows users to upload datasets or connect live databases and ask questions in natural language. The system understands schema, generates safe SQL, validates queries, executes them, visualizes results, and explains insights in simple English.
+AI Data Copilot is an AI-powered platform that allows users to upload datasets or connect live databases and ask questions in natural language. The  system understands schema, generates safe SQL, validates queries, executes them, visualizes results, and explains insights in simple English.
 
 ## Current Status
 
